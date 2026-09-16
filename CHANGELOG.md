@@ -7,6 +7,7 @@
 - Add GitHub Actions CI on Node 22 and 24
 
 ## Changes
+- Publish the package as `@jellydn/moleculer-cron`
 - Bump `moleculer` peer dependency to `^0.14.32 || ^0.15.0`
 - Require Node.js >= 18 (Moleculer 0.15 itself requires Node 22)
 - Align TypeScript types with the mixin API and Moleculer 0.15 `ServiceSettingSchema`
