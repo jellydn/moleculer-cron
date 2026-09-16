@@ -12,6 +12,12 @@ module.exports = {
     this.validateAndCreateJobs();
   },
 
+  async started() {
+    // Services created after broker.start() never see `$broker.started` again.
+    if (this.broker.started) {
+      this.startJobs();
+    }
+  },
 
   async stopped() {
     for (const job of this.jobs.values()) {
@@ -20,9 +26,9 @@ module.exports = {
   },
 
   events: {
-    '$broker.started': async function() {
+    "$broker.started": async function () {
       this.startJobs();
-    },
+    }
   },
 
   methods: {
@@ -70,11 +76,11 @@ module.exports = {
           this
         );
 
-        binderOnInitialize = jobConfig.onInitialize.bind(this);
-        binderOnStart = jobConfig.onStart.bind(this);
-        binderOnStop = jobConfig.onStop.bind(this);
-        binderOnComplete = jobConfig.onComplete.bind(this);
-        binderOnTick = jobConfig.onTick.bind(this);
+        const binderOnInitialize = jobConfig.onInitialize.bind(this);
+        const binderOnStart = jobConfig.onStart.bind(this);
+        const binderOnStop = jobConfig.onStop.bind(this);
+        const binderOnComplete = jobConfig.onComplete.bind(this);
+        const binderOnTick = jobConfig.onTick.bind(this);
     
         const jobWrapper = {
           name: jobConfig.name,

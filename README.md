@@ -1,15 +1,24 @@
-# moleculer-cron [![NPM version](https://img.shields.io/npm/v/moleculer-cron.svg)](https://www.npmjs.com/package/moleculer-cron)
+# @jellydn/moleculer-cron [![NPM version](https://img.shields.io/npm/v/%40jellydn%2Fmoleculer-cron.svg)](https://www.npmjs.com/package/%40jellydn%2Fmoleculer-cron)
 
 Cron mixin for Moleculer using [cron](https://www.npmjs.com/package/cron).
+
+Fork of [davidroman0O/moleculer-cron](https://github.com/davidroman0O/moleculer-cron) with Moleculer 0.15 support.
 
 ## Description
 
 Easy to use cron with Moleculer!
 
+## Compatibility
+
+| Moleculer | Node.js |
+|-----------|---------|
+| 0.14.x    | >= 18   |
+| 0.15.x    | >= 22   |
+
 ## Install
 
 ```bash
-$ npm install moleculer-cron --save
+$ npm install @jellydn/moleculer-cron --save
 ```
 
 ## Usage
@@ -19,7 +28,7 @@ $ npm install moleculer-cron --save
 Specify all of your cron tasks inside the `settings.cronJobs` array of the service.
 
 ```js
-const CronMixin = require("moleculer-cron");
+const CronMixin = require("@jellydn/moleculer-cron");
 
 broker.createService({
     name: "cron-job",
