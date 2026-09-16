@@ -108,6 +108,49 @@ describe("Test Cron Mixin", () => {
     });
   });
 
+  describe("Test Moleculer 0.15 service creation", () => {
+    it("should start jobs when the service is created after the broker has started", async () => {
+      await broker.start();
+
+      service = broker.createService({
+        name: "cron-late",
+        mixins: [CronMixin],
+        settings: {
+          cronJobs: [
+            { name: "lateJob", cronTime: "*/1 * * * * *", onTick: jest.fn() }
+          ]
+        }
+      });
+
+      await broker.waitForServices("cron-late", 5000, 20);
+
+      expect(service.jobs.get("lateJob").running()).toBe(true);
+    });
+
+    it("should invoke onTick after the broker starts", async () => {
+      const onTick = jest.fn();
+
+      service = broker.createService({
+        name: "cron-tick",
+        mixins: [CronMixin],
+        settings: {
+          cronJobs: [
+            {
+              name: "soonJob",
+              cronTime: new Date(Date.now() + 50),
+              onTick
+            }
+          ]
+        }
+      });
+
+      await broker.start();
+      await new Promise((resolve) => setTimeout(resolve, 250));
+
+      expect(onTick).toHaveBeenCalled();
+    });
+  });
+
   describe("Test error handling", () => {
     it("should handle invalid job configurations", async () => {
       const logSpy = jest.spyOn(console, 'error').mockImplementation(() => {});

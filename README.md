@@ -2,9 +2,18 @@
 
 Cron mixin for Moleculer using [cron](https://www.npmjs.com/package/cron).
 
+Fork of [davidroman0O/moleculer-cron](https://github.com/davidroman0O/moleculer-cron) with Moleculer 0.15 support.
+
 ## Description
 
 Easy to use cron with Moleculer!
+
+## Compatibility
+
+| Moleculer | Node.js |
+|-----------|---------|
+| 0.14.x    | >= 18   |
+| 0.15.x    | >= 22   |
 
 ## Install
 
