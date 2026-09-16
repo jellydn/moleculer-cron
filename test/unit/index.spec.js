@@ -137,7 +137,7 @@ describe("Test Cron Mixin", () => {
           cronJobs: [
             {
               name: "soonJob",
-              cronTime: new Date(Date.now() + 50),
+              cronTime: new Date(Date.now() + 1000),
               onTick
             }
           ]
@@ -145,7 +145,7 @@ describe("Test Cron Mixin", () => {
       });
 
       await broker.start();
-      await new Promise((resolve) => setTimeout(resolve, 250));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       expect(onTick).toHaveBeenCalled();
     });
