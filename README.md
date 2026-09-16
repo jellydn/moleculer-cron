@@ -109,7 +109,7 @@ broker.createService({
 - Minutes: 0-59
 - Hours: 0-23
 - Day of Month: 1-31
-- Months: 0-11 (Jan-Dec)
+- Months: 1-12 (Jan-Dec)
 - Day of Week: 0-6 (Sun-Sat)
 
 ## API
@@ -120,7 +120,9 @@ broker.createService({
 - `cronTime` - [REQUIRED] - The time to fire off your job. This can be in the form of cron syntax or a JS [Date](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Date) object.
 - `manualStart` - [OPTIONAL] - Specifies whether to start the job just before exiting the constructor. Default is false.
 - `timeZone` - [OPTIONAL] - Specify the timezone for the execution. Check all timezones available at [Moment Timezone Website](http://momentjs.com/timezone/).
-- `onInitialize` - [OPTIONAL] - Executed before the cron job is created.
+- `utcOffset` - [OPTIONAL] - Set the UTC offset in minutes. Do not combine it with `timeZone`.
+- `unrefTimeout` - [OPTIONAL] - Allow the process to exit when this job is the only remaining scheduled work.
+- `onInitialize` - [OPTIONAL] - Executed after the cron job is registered.
 - `onStart` - [OPTIONAL] - When the cron is starting.
 - `onStop` - [OPTIONAL] - When the cron is stopping.
 - `onComplete` - [OPTIONAL] - A function that will fire when the job is stopped.
