@@ -33,7 +33,7 @@
 **Build/Dev:**
 - No compilation or bundling tool is configured; the package exposes JavaScript directly through `main: index.js` and declarations through `types: index.d.ts`. [`package.json`](../../package.json), [`index.js`](../../index.js), [`index.d.ts`](../../index.d.ts)
 - nodemon ^3.1.0 runs the example in development; npm-check ^3.2.10 checks dependencies; bumpp 10.4.1 performs version releases without pushing. [`package.json`](../../package.json), [`package-lock.json`](../../package-lock.json)
-- ESLint 8.57.0 is invoked for `src` and `test`; no repository ESLint configuration file is present in the tracked file set. [`package.json`](../../package.json)
+- ESLint 8.57.0 is invoked for `src` and `test` with the repository configuration in [`.eslintrc.cjs`](../../.eslintrc.cjs). [`package.json`](../../package.json), [`.eslintrc.cjs`](../../.eslintrc.cjs)
 
 ## Key Dependencies
 
@@ -45,7 +45,7 @@
 - Jest/Jest CLI ^29.7.0 - unit testing and coverage. [`package.json`](../../package.json), [`test/unit/index.spec.js`](../../test/unit/index.spec.js)
 - ESLint 8.57.0 - linting. [`package.json`](../../package.json)
 - Coveralls 3.1.1 - optional coverage uploader, invoked by the `coverall` script after Jest writes `coverage/lcov.info`. [`package.json`](../../package.json)
-- benchmarkify ^4.0.0, lolex ^6.0.0, and moleculer-docgen ^0.2.1 are declared development dependencies, but no tracked source, example, test, script, or workflow imports or invokes them. [`package.json`](../../package.json), [`src/index.js`](../../src/index.js), [`examples/index.js`](../../examples/index.js), [`test/unit/index.spec.js`](../../test/unit/index.spec.js), [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
+- benchmarkify ^4.0.0 and moleculer-docgen ^0.2.1 are declared development dependencies, but no tracked source, example, test, script, or workflow imports or invokes them. [`package.json`](../../package.json), [`src/index.js`](../../src/index.js), [`examples/index.js`](../../examples/index.js), [`test/unit/index.spec.js`](../../test/unit/index.spec.js), [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
 
 ## Configuration
 

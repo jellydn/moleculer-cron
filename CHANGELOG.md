@@ -1,3 +1,13 @@
+# Unreleased
+
+## Fixes
++- Forward `utcOffset` and `unrefTimeout` to cron jobs, and normalise `setTime` inputs.
++- Reject duplicate job names and use sanitised job-creation error logging.
++- Correct cron v3 month documentation and remove duplicate example callbacks.
++- Add an ESLint configuration and enforce linting in CI.
++
+---------------------------------------------------
++
 <a name="0.1.0"></a>
 # 0.1.0 (2026-09-16)
 

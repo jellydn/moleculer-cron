@@ -52,9 +52,6 @@ broker.createService({
                 onStop: function() {
                     this.logger.info("on event JobHelloWorld is onStop");
                 },
-                onComplete: function() {
-                    this.logger.info("on event JobHelloWorld is onComplete");
-                },
             },
             {
                 name: "jobToggle",
@@ -79,9 +76,6 @@ broker.createService({
                 },
                 onStop: function() {
                     this.logger.info("on event JobToggle is onStop");
-                },
-                onComplete: function() {
-                    this.logger.info("on event JobToggle is onComplete");
                 },
             }
         ]

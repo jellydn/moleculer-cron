@@ -15,7 +15,7 @@
 ```bash
 npm test              # Run Jest with coverage
 npm run ci            # Run Jest in watch mode
-npm run lint          # Lint JavaScript in src and test (ESLint config is absent)
+npm run lint          # Lint JavaScript in src and test
 ```
 
 ## Test File Organization

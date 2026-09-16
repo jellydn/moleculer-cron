@@ -33,7 +33,7 @@
 
 **Linting:**
 - ESLint `8.57.0` is available and `npm run lint` runs `eslint --ext=.js src test` (`package.json`).
-- No ESLint configuration file is present (`.eslintrc*` and `eslint.config.*` are absent), so no repository-specific lint rules are defined.
+- [`.eslintrc.cjs`](../../.eslintrc.cjs) enables Node, Jest, and ES2021 environments and extends `eslint:recommended`.
 
 ## Import Organization
 

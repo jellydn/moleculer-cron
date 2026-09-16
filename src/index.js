@@ -38,48 +38,50 @@ module.exports = {
         return;
       }
 
+      const jobNames = new Set();
+
       for (const jobConfig of this.settings.cronJobs) {
         try {
+          if (jobNames.has(jobConfig.name)) {
+            throw new Error(`Duplicate cron job name: ${jobConfig.name}`);
+          }
+
+          jobNames.add(jobConfig.name);
           this.createJob(jobConfig);
         } catch (error) {
-          this.logger.error(`Error creating cron job: ${error.message}`, jobConfig);
-          console.error(error);
+          const jobName = jobConfig?.name || "<unnamed>";
+          this.logger.error(`Error creating cron job ${jobName}: ${error.message}`);
         }
       }
     },
 
     createJob(jobConfig) {
-      if (!jobConfig.name || !jobConfig.cronTime || !jobConfig.onTick) {
+      if (!jobConfig?.name || !jobConfig.cronTime || typeof jobConfig.onTick !== "function") {
         throw new Error("Invalid job configuration. Required: name, cronTime, onTick");
       }
-    
-      if (!jobConfig.onInitialize || typeof jobConfig.onInitialize !== 'function') {
-        jobConfig.onInitialize = function() {}
-      }
-      if (!jobConfig.onStart || typeof jobConfig.onStart !== 'function') {
-        jobConfig.onStart = function() {}
-      }
-      if (!jobConfig.onStop || typeof jobConfig.onStop !== 'function') {
-        jobConfig.onStop = function() {}
-      }
-      if (!jobConfig.onComplete || typeof jobConfig.onComplete !== 'function') {
-        jobConfig.onComplete = function() {}
-      }
+
+      const onInitialize = typeof jobConfig.onInitialize === "function" ? jobConfig.onInitialize : () => {};
+      const onStart = typeof jobConfig.onStart === "function" ? jobConfig.onStart : () => {};
+      const onStop = typeof jobConfig.onStop === "function" ? jobConfig.onStop : () => {};
+      const onComplete = typeof jobConfig.onComplete === "function" ? jobConfig.onComplete : () => {};
 
       try {
         const job = new CronJob(
           jobConfig.cronTime,
           this.wrapOnTick(jobConfig.name, jobConfig.onTick),
-          this.wrapOnComplete(jobConfig.name, jobConfig.onComplete),
+          this.wrapOnComplete(jobConfig.name, onComplete),
           false,
           jobConfig.timeZone,
-          this
+          this,
+          false,
+          jobConfig.utcOffset,
+          jobConfig.unrefTimeout
         );
 
-        const binderOnInitialize = jobConfig.onInitialize.bind(this);
-        const binderOnStart = jobConfig.onStart.bind(this);
-        const binderOnStop = jobConfig.onStop.bind(this);
-        const binderOnComplete = jobConfig.onComplete.bind(this);
+        const binderOnInitialize = onInitialize.bind(this);
+        const binderOnStart = onStart.bind(this);
+        const binderOnStop = onStop.bind(this);
+        const binderOnComplete = onComplete.bind(this);
         const binderOnTick = jobConfig.onTick.bind(this);
     
         const jobWrapper = {
@@ -115,7 +117,8 @@ module.exports = {
             return this.cronJob.running;
           },
           setTime: function(cronTime) {
-            return this.cronJob.setTime(cronTime);
+            const time = cronTime instanceof CronTime ? cronTime : new CronTime(cronTime);
+            return this.cronJob.setTime(time);
           },
           nextDates: function(count) {
             return this.cronJob.nextDates(count);
@@ -132,7 +135,7 @@ module.exports = {
         jobWrapper.onInitialize();
         
       } catch (error) {
-        console.error(error);
+        this.jobs.delete(jobConfig.name);
         throw new Error(`Failed to create job ${jobConfig.name}: ${error.message}`);
       }
     },

@@ -74,6 +74,100 @@ describe("Test Cron Mixin", () => {
     });
   });
 
+  describe("Test cron options", () => {
+    it("should forward cron options and normalize setTime inputs", async () => {
+      service = broker.createService({
+        name: "cron-options",
+        mixins: [CronMixin],
+        settings: {
+          cronJobs: [
+            {
+              name: "configuredJob",
+              cronTime: "*/5 * * * * *",
+              onTick: jest.fn(),
+              manualStart: true,
+              utcOffset: 120,
+              unrefTimeout: true
+            }
+          ]
+        }
+      });
+      await broker.start();
+
+      const job = service.getJob("configuredJob");
+      expect(job.cronJob.cronTime.utcOffset).toBe(120);
+      expect(job.cronJob.unrefTimeout).toBe(true);
+
+      job.setTime("*/10 * * * * *");
+      expect(job.cronJob.cronTime.source).toBe("*/10 * * * * *");
+
+      job.setTime(new Date(Date.now() + 60_000));
+      expect(job.cronJob.cronTime.realDate).toBe(true);
+    });
+
+    it("should reject duplicate job names without replacing the first job", () => {
+      const firstOnInitialize = jest.fn();
+      const duplicateOnInitialize = jest.fn();
+
+      service = broker.createService({
+        name: "cron-duplicates",
+        mixins: [CronMixin],
+        settings: {
+          cronJobs: [
+            { name: "duplicate", cronTime: "*/5 * * * * *", onTick: jest.fn(), onInitialize: firstOnInitialize },
+            { name: "duplicate", cronTime: "*/10 * * * * *", onTick: jest.fn(), onInitialize: duplicateOnInitialize }
+          ]
+        }
+      });
+
+      expect(service.jobs.size).toBe(1);
+      expect(service.getJob("duplicate").cronJob.cronTime.source).toBe("*/5 * * * * *");
+      expect(firstOnInitialize).toHaveBeenCalledTimes(1);
+      expect(duplicateOnInitialize).not.toHaveBeenCalled();
+    });
+
+    it("should not replace a failed job with a duplicate configuration", () => {
+      const duplicateOnInitialize = jest.fn();
+
+      service = broker.createService({
+        name: "cron-failed-duplicate",
+        mixins: [CronMixin],
+        settings: {
+          cronJobs: [
+            {
+              name: "duplicate",
+              cronTime: "*/5 * * * * *",
+              onTick: jest.fn(),
+              onInitialize: () => {
+                throw new Error("initialization failed");
+              }
+            },
+            { name: "duplicate", cronTime: "*/10 * * * * *", onTick: jest.fn(), onInitialize: duplicateOnInitialize }
+          ]
+        }
+      });
+
+      expect(service.jobs.has("duplicate")).toBe(false);
+      expect(duplicateOnInitialize).not.toHaveBeenCalled();
+    });
+
+    it("should register a job before onInitialize runs", () => {
+      const onInitialize = jest.fn(function () {
+        expect(this.getJob("initializingJob")).toBeDefined();
+      });
+
+      service = broker.createService({
+        name: "cron-initialize",
+        mixins: [CronMixin],
+        settings: {
+          cronJobs: [{ name: "initializingJob", cronTime: "*/5 * * * * *", onTick: jest.fn(), onInitialize }]
+        }
+      });
+
+      expect(onInitialize).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("Test service lifecycle", () => {
     beforeEach(async () => {
       service = broker.createService({
@@ -152,9 +246,9 @@ describe("Test Cron Mixin", () => {
   });
 
   describe("Test error handling", () => {
-    it("should handle invalid job configurations", async () => {
-      const logSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      
+    it("should handle invalid job configurations without writing to stderr", async () => {
+      const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       service = broker.createService({
         name: "cron",
         mixins: [CronMixin],
@@ -162,13 +256,13 @@ describe("Test Cron Mixin", () => {
           cronJobs: [{ name: "invalidJob" }]
         }
       });
-      
+
       await broker.start();
-      
-      expect(logSpy).toHaveBeenCalled();
+
+      expect(errorSpy).not.toHaveBeenCalled();
       expect(service.jobs.size).toBe(0);
-      
-      logSpy.mockRestore();
+
+      errorSpy.mockRestore();
     });
   });
 

@@ -6,6 +6,7 @@
 
 ```
 [project-root]/
+├── .eslintrc.cjs # ESLint configuration
 ├── .github/workflows/ # GitHub Actions continuous-integration workflow
 ├── .planning/codebase/ # Generated codebase-map documentation
 ├── .vscode/ # Editor debug configuration
@@ -62,8 +63,9 @@ The layout above is derived from the repository files and directories at [`packa
 - [`examples/index.js`](../../examples/index.js): Development example launched by `npm run dev`. [`package.json`](../../package.json)
 
 **Configuration:**
-- [`package.json`](../../package.json): Defines package metadata, the runtime dependency on `cron`, Moleculer peer compatibility, npm scripts, engine requirement, and Jest settings. [`package.json`](../../package.json)
-- [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml): Defines Node-version CI matrix and test commands. [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
+- [`package.json`](../../package.json): Defines package metadata, runtime dependencies, npm scripts, engine requirement, Jest settings, and the published-files allowlist. [`package.json`](../../package.json)
+- [`.eslintrc.cjs`](../../.eslintrc.cjs): Enables Node, Jest, and ES2021 lint environments. [`.eslintrc.cjs`](../../.eslintrc.cjs)
+- [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml): Defines the Node-version CI matrix and runs lint plus tests. [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
 - [`.vscode/launch.json`](../../.vscode/launch.json): Defines VS Code debug configuration. [`.vscode/launch.json`](../../.vscode/launch.json)
 
 **Core Logic:**
